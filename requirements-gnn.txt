@@ -1,0 +1,3 @@
+# X3(GNN) 실험용. torch는 CUDA 12.8 휠 기준: pip install torch --index-url https://download.pytorch.org/whl/cu128
+torch==2.11.0
+torch_geometric==2.8.1

@@ -25,8 +25,11 @@ Elliptic 데이터셋에서 불법 거래를 탐지하는 기계학습 팀 프�
 | E3 | 엣지리스트로 만든 그래프 피처 | 최고 F1 0.827. 기존 집계 피처 위에서는 거의 늘지 않는다 |
 | X1 | 피처 범위별 기여도 | 거래 자체 21개 0.354, 주소 통계 72개 0.774, 거래 시점에 계산 가능한 57개 0.557 |
 | X2 | 학습·테스트 구간 주소 중복 | 테스트 불법 거래 1,083건 중 학습 구간 주소 공유 5건. 합법 거래는 35~42 구간의 37%가 공유 |
+| X3 | GraphSAGE 대 같은 피처의 MLP 대 엣지를 섞은 그래프 | 165개 피처에서 PR-AUC가 MLP 0.675, GraphSAGE 0.736, 섞은 그래프 0.553, LightGBM 0.809 |
+| X4 | 주소 단위(Elliptic++)에서 누수 있는 피처와 없는 피처 | 시간 분할을 지키면 LightGBM F1 0.431 대 0.419 |
+| X5 | 폐쇄 전후 불법 거래의 피처 변화 | 깊이 2 트리 규칙을 만족하는 불법 거래가 35~42 구간 69.9%, 43~49 구간 0.0% |
 
-43번째 time step(다크마켓 폐쇄로 해석되는 시점) 이후에는 모든 방법의 F1이 0.1 아래로 떨어진다. X1에서 사후 최적 임계값으로도 F1 0.2를 넘지 못해, 임계값이 아니라 순위의 실패다.
+43번째 time step(다크마켓 폐쇄로 해석되는 시점) 이후에는 모든 방법의 F1이 0.1 아래로 떨어진다. X1에서 사후 최적 임계값으로도 F1 0.2를 넘지 못해, 임계값이 아니라 순위의 실패다. X5에서 원인을 확인했다. 폐쇄 전 불법 거래의 대부분은 수명이 짧은 입력 주소에서 나오는데, 폐쇄 후 불법 거래에는 이 유형이 없다.
 
 자세한 분석은 [docs/01_문제재정의_문헌_데이터.md](docs/01_문제재정의_문헌_데이터.md)에 있다.
 
@@ -43,6 +46,9 @@ e2_baseline.py              E2 지도학습 베이스라인
 e3_graph_features.py        E3 그래프 피처
 x1_feature_scope.py         X1 피처 범위별 기여도
 x2_address_overlap.py       X2 주소 중복 (Elliptic++ 필요)
+x3_gnn.py                   X3 그래프의 순수 기여 (requirements-gnn.txt)
+x4_address_leakage.py       X4 주소 단위 누수 비교 (Elliptic++, 재계산 피처 필요)
+x5_drift_profile.py         X5 폐쇄 전후 피처 변화
 results/                    실험 결과 CSV
 figures/                    그림
 docs/                       분석 문서
@@ -62,6 +68,9 @@ python e3_graph_features.py
 python e1_rules.py                 # E2, E3 결과를 참고치로 읽는다
 python x1_feature_scope.py
 python x2_address_overlap.py       # data/ellipticpp/ 필요
+python x3_gnn.py                   # GPU 권장, pip install -r requirements-gnn.txt
+python x4_address_leakage.py       # data/ellipticpp/, data/ellipticpp_lr/ 필요
+python x5_drift_profile.py
 ```
 
 ## 데이터
