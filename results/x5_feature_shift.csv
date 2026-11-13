@@ -1,0 +1,16 @@
+﻿column,shift_in_std,illicit_01_34,illicit_35_42,illicit_43_49,licit_43_49,description
+agg_52,1.217,0.143,0.143,-1.016,0.082,Pearson correlation between fee of output txs and indices
+agg_53,1.216,0.143,0.143,-1.016,0.075,Spearman correlation between fee of output txs and indices
+local_19,1.138,-0.243,-0.243,-1.374,0.182,Pearson correlation between output values and indices
+local_20,1.129,-0.243,-0.243,-1.371,0.321,Spearman correlation between output values and indices
+agg_64,0.846,0.241,0.241,-0.587,0.226,Pearson correlation between number of inputs of output txs and indices
+agg_48,0.809,-0.07,0.39,-0.053,-0.123,Minimum fee of output txs
+local_52,0.727,-0.488,-0.488,0.554,0.19,Maximum lifetime of input addresses
+agg_20,0.722,-0.35,-0.35,0.683,-0.35,
+agg_65,0.651,0.241,0.241,-0.396,0.228,Spearman correlation between number of inputs of output txs and indices
+agg_56,0.624,-1.06,-1.06,-0.453,-0.217,
+agg_50,0.551,-0.425,-0.425,0.149,-0.11,Standard deviation of fee of output txs
+agg_54,0.526,0.117,1.203,1.746,0.66,
+agg_7,0.525,-0.246,1.066,1.59,1.394,Maximum height of input txs
+agg_9,0.515,-0.242,1.067,1.584,1.394,Mean height of input txs
+local_54,0.501,-0.468,-0.468,0.241,-0.023,Mean lifetime of input addresses
