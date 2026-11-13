@@ -1,0 +1,17 @@
+﻿model,period,group,n_illicit,n_licit,illicit_recall,licit_fpr
+all,35_42,seen_illicit,1,0,0.0,
+all,35_42,seen_other,2,3344,0.0,0.0
+all,35_42,unseen,911,5491,0.8639,0.0033
+all,35_42,no_address,0,234,,0.0
+all,43_49,seen_illicit,1,0,0.0,
+all,43_49,seen_other,1,1682,0.0,0.0
+all,43_49,unseen,167,4746,0.018,0.0051
+all,43_49,no_address,0,90,,0.0
+tx+nbr_in,35_42,seen_illicit,1,0,0.0,
+tx+nbr_in,35_42,seen_other,2,3344,0.0,0.0123
+tx+nbr_in,35_42,unseen,911,5491,0.5906,0.0171
+tx+nbr_in,35_42,no_address,0,234,,0.0
+tx+nbr_in,43_49,seen_illicit,1,0,0.0,
+tx+nbr_in,43_49,seen_other,1,1682,0.0,0.025
+tx+nbr_in,43_49,unseen,167,4746,0.1317,0.0369
+tx+nbr_in,43_49,no_address,0,90,,0.0

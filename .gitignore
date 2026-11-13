@@ -1,0 +1,20 @@
+# 데이터: Elliptic은 CC BY-NC-ND 4.0이라 재배포하지 않는다. 스크립트로 받는다.
+data/
+
+# 논문 원문과 추출 텍스트: 목록과 링크는 papers/README.md
+papers/*.pdf
+papers/txt/
+papers/nesfit_feature_semantics_README.md
+
+# 외부 저장소의 설명을 옮긴 표: build_feature_semantics.py로 만든다.
+feature_semantics.csv
+
+# 팀 내부 문서
+진행상황_결과정리.md
+ML_팀프로젝트_데이터셋_논의_정리.md
+external/
+
+.venv/
+__pycache__/
+.DS_Store
+*.log
