@@ -44,13 +44,37 @@ def load_edges():
     return pd.read_csv(DATA_DIR / "elliptic_txs_edgelist.csv")
 
 
+# 피처 의미(Šafář et al., 2026; feature_semantics.csv)에 따른 묶음
+TX = [f"local_{i}" for i in range(21)]            # 거래 자체 (금액, 수수료, 입출력 수 등)
+ADDR = [f"local_{i}" for i in range(21, 93)]      # 입출력 주소 누적 통계 (데이터 수집 종료 시점 기준 → 미래 포함)
+NBR_IN = [f"agg_{i}" for i in range(36)]          # 선행 거래 집계 (과거)
+NBR_OUT = [f"agg_{i}" for i in range(36, 72)]     # 후속 거래 집계 (미래)
+
+# 평가 설정
+#   A = 전체 165개 (기존 연구와 같은 설정, 미래 정보 포함)
+#   B = 거래 시점 57개 (거래가 일어난 순간에 알 수 있는 정보만: 거래 자체 + 선행 거래 집계)
+FEATURE_SETS = {
+    "local": TX + ADDR,
+    "all": TX + ADDR + NBR_IN + NBR_OUT,   # 설정 A
+    "time": TX + NBR_IN,                   # 설정 B
+}
+
+
 def feature_cols(df, feature_set):
-    """'local' = 로컬 93개, 'all' = 로컬 + 이웃 집계 165개."""
-    if feature_set == "local":
-        return [c for c in df.columns if c.startswith("local_")]
-    if feature_set == "all":
-        return [c for c in df.columns if c.startswith(("local_", "agg_"))]
-    raise ValueError(f"unknown feature_set: {feature_set}")
+    """'local' = 로컬 93개, 'all' = 165개(설정 A), 'time' = 거래 시점 57개(설정 B)."""
+    if feature_set not in FEATURE_SETS:
+        raise ValueError(f"unknown feature_set: {feature_set}")
+    return FEATURE_SETS[feature_set]
+
+
+def z_to_count(z):
+    """정규화된 개수 피처(입력 수, 출력 수 등)를 실제 개수로 되돌린다.
+
+    값의 간격이 일정하므로 (z - 최솟값) / 간격 + 1 이 개수다(최솟값 = 1개).
+    """
+    u = np.unique(z)
+    step = np.min(np.diff(u[:10]))
+    return np.rint((z - u[0]) / step).astype(int) + 1
 
 
 def split(df):
