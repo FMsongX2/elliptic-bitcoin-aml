@@ -1,0 +1,17 @@
+{
+  "n_configs": 57,
+  "spearman_rolling_vs_test": 0.41645060928182526,
+  "spearman_single_vs_test": 0.4484054964998704,
+  "pick_rolling": {
+    "name": "sup:small,hl20,unsup",
+    "test_mean": 0.5493453669196011
+  },
+  "pick_single": {
+    "name": "sup:small",
+    "test_mean": 0.5838548639627337
+  },
+  "best_on_test_for_reference": {
+    "name": "st:team,thr0.99/0.99",
+    "test_mean": 0.6237925210788662
+  }
+}

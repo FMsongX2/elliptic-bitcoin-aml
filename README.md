@@ -28,6 +28,9 @@ Elliptic 데이터셋에서 불법 거래를 탐지하는 기계학습 팀 프�
 | X3 | GraphSAGE 대 같은 피처의 MLP 대 엣지를 섞은 그래프 | 165개 피처에서 PR-AUC가 MLP 0.675, GraphSAGE 0.736, 섞은 그래프 0.553, LightGBM 0.809 |
 | X4 | 주소 단위(Elliptic++)에서 누수 있는 피처와 없는 피처 | 시간 분할을 지키면 LightGBM F1 0.431 대 0.419 |
 | X5 | 폐쇄 전후 불법 거래의 피처 변화 | 깊이 2 트리 규칙을 만족하는 불법 거래가 35~42 구간 69.9%, 43~49 구간 0.0% |
+| E6b-B | 설정 B, label 없이 anomaly score (detector 8종) | 최고 BIRCH PR-AUC 0.299 (random 0.065). 8종 모두 score 방향이 반대 |
+| E7 | 설정 B, train label 1-100%만 공개 (Self-training, Label Spreading, cluster 방법, Active learning) | label 1% Self-training 0.544 대 LightGBM 0.489. 5-10%는 label 100% LightGBM(0.593)과 우열 판정 불가 |
+| E7c·E7d | 설정 B, hyperparameter config·variant 탐색, test 기간 unlabeled 거래로 adaptation | 일관된 개선 없음 |
 
 43번째 time step(다크마켓 폐쇄로 해석되는 시점) 이후에는 모든 방법의 F1이 0.1 아래로 떨어진다. X1에서 사후 최적 임계값으로도 F1 0.2를 넘지 못해, 임계값이 아니라 순위의 실패다. X5에서 원인을 확인했다. 폐쇄 전 불법 거래의 대부분은 수명이 짧은 입력 주소에서 나오는데, 폐쇄 후 불법 거래에는 이 유형이 없다.
 
@@ -49,6 +52,20 @@ x2_address_overlap.py       X2 주소 중복 (Elliptic++ 필요)
 x3_gnn.py                   X3 그래프의 순수 기여 (requirements-gnn.txt)
 x4_address_leakage.py       X4 주소 단위 누수 비교 (Elliptic++, 재계산 피처 필요)
 x5_drift_profile.py         X5 폐쇄 전후 피처 변화
+prep.py                     distance-based 방법용 preprocessing (E6b)
+detectors.py, detectors_e6b.py  unsupervised detector (E6, E6b)
+prep_diagnostics.py         설정 B feature distribution 진단
+prep_research_b.py          설정 B distance space 비교 (validation만 사용)
+e6_unsupervised.py          E6 unsupervised (165개, e6b_improved.py가 함수를 가져다 쓴다)
+e6b_improved.py             E6b unsupervised, --setting B = 57개
+e7_semi_supervised.py       E7 semi-supervised (label 1-100%)
+e7b_semi_supervised.py      E7b distance space와 label이 적을 때의 threshold
+e7c_search.py               E7c hyperparameter config·Self-training variant 탐색 (rolling-origin validation)
+e7c_report.py               E7c 선택 규칙 분석
+e7c_confirm.py              E7c 대표 방법을 seed 3-5로 다시 실행
+e7d_test_time_st.py         E7d test 기간 unlabeled 거래로 Self-training
+eval_reliability.py         bootstrap CI, top-k, calibration, ensemble (seed 6개)
+tests/                      E6·E7 테스트 (pytest)
 results/                    실험 결과 CSV
 figures/                    그림
 docs/                       분석 문서
@@ -71,6 +88,21 @@ python x2_address_overlap.py       # data/ellipticpp/ 필요
 python x3_gnn.py                   # GPU 권장, pip install -r requirements-gnn.txt
 python x4_address_leakage.py       # data/ellipticpp/, data/ellipticpp_lr/ 필요
 python x5_drift_profile.py
+
+# 설정 B unsupervised·semi-supervised (위에서부터 순서대로)
+python prep_diagnostics.py --setting B
+python prep_research_b.py
+python e6b_improved.py --setting B
+python e7_semi_supervised.py
+python e7b_semi_supervised.py
+python e7c_search.py --stage 1
+python e7c_search.py --stage 2 --base-config '{"kind":"sup","base":"small","half_life":20,"unsup":true}'
+python e7c_search.py --stage 2 --base-config '{"kind":"sup","base":"team","half_life":null,"unsup":false}'
+python e7c_report.py
+python e7c_confirm.py
+python eval_reliability.py         # e7c_search·e7c_confirm이 저장한 results/*.joblib 예측을 읽는다
+python e7d_test_time_st.py
+python -m pytest tests            # pip install pytest
 ```
 
 ## 데이터

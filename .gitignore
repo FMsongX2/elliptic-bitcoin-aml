@@ -14,7 +14,13 @@ feature_semantics.csv
 ML_팀프로젝트_데이터셋_논의_정리.md
 external/
 
+# 학습된 모델과 저장한 예측: 스크립트를 다시 돌리면 생긴다 (eval_reliability.py는 e7c 예측을 읽는다).
+models/
+results/*.joblib
+results/e7d_preds/
+
 .venv/
+.pytest_cache/
 __pycache__/
 .DS_Store
 *.log

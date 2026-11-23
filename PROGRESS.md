@@ -2,6 +2,95 @@
 
 최신 항목이 위에 온다. 수치의 출처는 `results/`의 CSV다.
 
+## 2026-11-24
+
+### 설정 B의 unsupervised(E6)와 semi-supervised(E7)
+
+모든 실험은 설정 B(transaction-time feature 57개, `feature_cols(df, "time")`)로 했다. 분할은 `common.py`를 따른다. train 1-30으로 학습하고, validation 31-34에서 hyperparameter config와 threshold를 고른 뒤, 1-34로 다시 학습해 test 35-49에서 평가했다. PR-AUC는 `average_precision_score`다.
+
+| 방법 | train label | PR-AUC 35-49 | 95% CI | 35-42 | 43-49 |
+|---|---|---|---|---|---|
+| Random guess | - | 0.065 | - | 0.092 | 0.025 |
+| Unsupervised BIRCH | 0% | 0.299 | 0.156-0.407 | 0.399 | 0.023 |
+| LightGBM | 1% | 0.489 | 0.256-0.625 | 0.643 | 0.025 |
+| Self-training | 1% | 0.544 | 0.300-0.678 | 0.701 | 0.028 |
+| LightGBM | 5% | 0.594 | 0.334-0.727 | 0.736 | 0.050 |
+| Self-training | 5% | 0.593 | 0.336-0.728 | 0.748 | 0.047 |
+| LightGBM | 10% | 0.624 | 0.365-0.755 | 0.750 | 0.070 |
+| Self-training | 10% | 0.635 | 0.387-0.760 | 0.765 | 0.072 |
+| LightGBM | 100% | 0.593 | 0.332-0.735 | 0.733 | 0.091 |
+
+BIRCH는 seed 3개, 나머지는 seed 6개의 mean이다(`eval_bootstrap.csv`, `eval_seed_ap.csv`). 95% CI는 test time step을 통째로 1,000번 다시 뽑은 bootstrap이다. "label 1%"는 1-34의 label 29,894건 중 1%(299건)만 학습에 공개한다는 뜻이다.
+
+- label이 없으면 약하다. unsupervised detector 8종 중 가장 좋은 BIRCH가 0.299다.
+- label은 1%만 있어도 0.49-0.54가 된다. label 5-10%(1,495-2,989건)와 label 100% LightGBM 사이의 우열은 판정할 수 없었다.
+- Self-training이 LightGBM보다 낫다고 판정된 것은 label 1%뿐이다(+0.055 ± 0.015). 5%와 10%에서는 판정할 수 없었다.
+- 판정 기준: 차이가 t-distribution 95% 기준(seed 6개면 standard error의 2.57배, 3개면 4.30배)을 넘고, bootstrap 95% CI도 0을 포함하지 않아야 "높다"고 쓴다.
+
+#### Data 진단과 preprocessing (`prep_diagnostics.py --setting B`, `prep_research_b.py`)
+
+- train 1-30에서 kurtosis median이 283이다. normal distribution에 가까운 feature는 57개 중 2개다. 37개는 값의 절반 넘게 한 값에 몰려 있다.
+- 선행 거래의 block height(`agg_6`, `agg_7`, `agg_9`)는 train과 test의 KS가 0.996-0.998이다. 사실상 시간을 담은 time-proxy feature다.
+- distance-based 방법(kNN, Label Spreading)은 Standardization에서 validation PR-AUC가 가장 낮았다. 이후 distance space는 Quantile transform 57개 + PCA-20을 쓴다. validation에서는 다른 transform이 높았지만 test에서 순위가 뒤집혀, test를 보고 정했다(E7b).
+
+#### Unsupervised (E6b-B, `e6b_improved.py --setting B`)
+
+label 없이 1-30의 모든 거래(unknown 포함)로 detector를 학습했다. validation label로 hyperparameter config와 score 방향을 골랐다. 8종, hyperparameter config 240개, seed 3개다.
+
+| detector | preprocessing | validation | test | 35-42 | 43-49 |
+|---|---|---|---|---|---|
+| BIRCH | std_notp | 0.566 | 0.299 | 0.399 | 0.023 |
+| PCA reconstruction | std_notp | 0.640 | 0.177 | 0.272 | 0.023 |
+| GMM component | quantile | 0.408 | 0.156 | 0.237 | 0.022 |
+| One-Class SVM | std_notp | 0.452 | 0.149 | 0.234 | 0.025 |
+| HDBSCAN | quantile | 0.465 | 0.111 | 0.174 | 0.024 |
+| Kernel PCA reconstruction | std_notp | 0.486 | 0.098 | 0.148 | 0.024 |
+| Isolation Forest | std | 0.408 | 0.097 | 0.149 | 0.021 |
+| GMM density | std | 0.507 | 0.080 | 0.116 | 0.020 |
+
+- 8종 모두 validation에서 고른 score 방향이 반대였다. anomaly score가 낮은 거래일수록 illicit이었다.
+- validation에서 가장 좋았던 PCA reconstruction(0.640)은 test에서 0.177이다.
+
+#### Semi-supervised (E7, `e7_semi_supervised.py`)
+
+train label의 1, 5, 10, 50, 100%만 공개하고 나머지 label과 unknown 거래를 unlabeled data로 썼다. classifier는 E2의 LightGBM이다. 아래는 seed 3개의 test PR-AUC이고, ± 는 standard deviation이다.
+
+| 방법 | 1% | 5% | 10% | 50% | 100% |
+|---|---|---|---|---|---|
+| LightGBM | 0.543 ± 0.022 | 0.603 ± 0.033 | 0.627 ± 0.015 | 0.621 ± 0.031 | 0.603 ± 0.010 |
+| LightGBM (54개 feature, time-proxy 제외) | 0.537 ± 0.059 | 0.585 ± 0.035 | 0.594 ± 0.025 | 0.602 ± 0.013 | 0.590 ± 0.003 |
+| Self-training | 0.589 ± 0.012 | 0.629 ± 0.039 | 0.645 ± 0.024 | 0.643 ± 0.038 | 0.564 ± 0.019 |
+| Label Spreading | 0.370 ± 0.126 | 0.571 ± 0.023 | 0.562 ± 0.041 | 0.607 ± 0.036 | 0.629 ± 0.007 |
+| Cluster representative (Lec9) | 0.475 ± 0.056 | 0.630 ± 0.031 | 0.643 ± 0.016 | - | - |
+| Cluster label propagation (Lec9) | 0.539 ± 0.056 | 0.623 ± 0.011 | 0.618 ± 0.041 | - | - |
+| Active learning (uncertainty) | 0.563 ± 0.058 | 0.491 ± 0.068 | 0.549 ± 0.017 | - | - |
+
+- 같은 seed끼리 LightGBM과 비교해 기준을 넘은 것은 셋이다. Label Spreading 100%는 높고, Active learning 10%와 54개 feature 10%는 낮다.
+- validation label도 train과 같은 비율만 있다고 보고 threshold를 정하면(E7b), Self-training의 F1은 0.03 안에서 바뀌지만 LightGBM 1%는 0.07 낮아진다.
+
+#### 개선 시도 (E7c, E7d)
+
+- **E7c (`e7c_search.py`):** LightGBM hyperparameter config 32종(base 4종 × 최근 거래 weight 4종 × unsupervised score feature 유무)과 Self-training variant 11종을 rolling-origin validation(1-20→21-24, 1-26→27-30, 1-30→31-34)으로 비교했다. 일관된 개선은 없었다. validation score와 test 순위의 Spearman correlation은 0.42-0.45다.
+- **E7d (`e7d_test_time_st.py`):** time step t를 예측할 때 35..t의 unlabeled 거래를 Self-training에 넣었다(t 뒤 거래는 쓰지 않음). 일관된 개선이 없다(10%: 0.638 → 0.642, 5%: 0.633 → 0.600).
+
+#### 신뢰도 평가 (`eval_reliability.py`)
+
+- 대표 방법은 seed 6개로 다시 쟀다. seed 0-2는 `e7c_search.py`, 3-5는 `e7c_confirm.py`다.
+- Self-training, LightGBM, Label Spreading의 ensemble은 미래 time step을 쓰지 않는 두 규칙(35..t 안의 rank average, probability mean)으로 만들었다. 둘 다 Self-training보다 낫다고 판정되지 않았다(10%: 0.605, 0.633 대 0.635).
+- time step마다 labeled 거래 top-100을 조사하면 Self-training 10%의 recall이 35-42에서 0.558, 43-49에서 0.393이다.
+- 예측 probability의 mean은 실제 illicit ratio를 따라가지 못한다(Self-training 10%, 35-42에서 예측 0.052 대 실제 0.092). fixed probability threshold를 오래 쓰기 어렵다.
+
+#### 바로잡은 것
+
+- 처음에는 ensemble을 test 기간 전체(35-49)에서 rank로 바꿔 만들었다. 이렇게 하면 35의 score가 49의 score distribution을 본다. 고친 뒤 "ensemble이 가장 좋다"는 결론은 사라졌다. `e7c_report.py`와 `e7c_confirm.py`에서 이 계산을 지웠다. `tests/test_eval_reliability.py`는 뒤 time step을 바꾸거나 지워도 앞 time step의 score가 같은지 확인한다.
+- 직접 짠 Self-training 반복이 마지막 pseudo-label을 더한 뒤 다시 학습하지 않았다. 고친 뒤 scikit-learn `SelfTrainingClassifier`와 예측이 같은지 `tests/test_self_training.py`로 확인한다.
+
+#### 주의
+
+- test 35-49를 여러 번 보면서 실험했다. 수치는 optimistic일 수 있다.
+- 성능은 labeled 거래에서 잰 값이다. unlabeled 거래까지 포함한 실제 alert 성능은 아니다.
+- 43-49는 모든 방법이 0.1 아래다. 원인 분석과 새 label에 따른 회복은 다음 PR에서 올린다.
+
 ## 2026-11-13
 
 ### 환경
