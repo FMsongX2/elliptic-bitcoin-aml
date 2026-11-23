@@ -1,0 +1,41 @@
+{
+  "A_cv_pr_auc_1_34_single": {
+    "mean": 0.9847860548440167,
+    "n": 14568,
+    "illicit": 3197,
+    "prevalence": 0.21945359692476663
+  },
+  "A_cv_pr_auc_1_34_multi": {
+    "mean": 0.6027956037654255,
+    "n": 15326,
+    "illicit": 265,
+    "prevalence": 0.01729087824611771
+  },
+  "A_cv_pr_auc_1_34_all": {
+    "mean": 0.9694361465871383,
+    "n": 29894,
+    "illicit": 3462,
+    "prevalence": 0.11580919248009634
+  },
+  "C_post_clusters": [
+    2,
+    9,
+    5
+  ],
+  "C_post_share_in_top3": 0.7988165680473372,
+  "C_rows_in_top3_1-34": {
+    "n": 11674,
+    "illicit": 167,
+    "illicit_share": 0.014305293815316087
+  },
+  "C_rows_in_top3_35-42": {
+    "n": 2450,
+    "illicit": 66,
+    "illicit_share": 0.026938775510204082
+  },
+  "C_rows_in_top3_43-49": {
+    "n": 2254,
+    "illicit": 135,
+    "illicit_share": 0.05989352262644188
+  }
+}

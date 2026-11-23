@@ -1,0 +1,12 @@
+{
+  "domain_auc_illicit": 0.9933657495875062,
+  "n_illicit_pre_post": [
+    4376,
+    169
+  ],
+  "domain_auc_licit": 0.8875688181457722,
+  "n_licit_pre_post": [
+    4376,
+    169
+  ]
+}

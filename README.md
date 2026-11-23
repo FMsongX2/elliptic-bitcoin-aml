@@ -31,10 +31,13 @@ Elliptic 데이터셋에서 불법 거래를 탐지하는 기계학습 팀 프�
 | E6b-B | 설정 B, label 없이 anomaly score (detector 8종) | 최고 BIRCH PR-AUC 0.299 (random 0.065). 8종 모두 score 방향이 반대 |
 | E7 | 설정 B, train label 1-100%만 공개 (Self-training, Label Spreading, cluster 방법, Active learning) | label 1% Self-training 0.544 대 LightGBM 0.489. 5-10%는 label 100% LightGBM(0.593)과 우열 판정 불가 |
 | E7c·E7d | 설정 B, hyperparameter config·variant 탐색, test 기간 unlabeled 거래로 adaptation | 일관된 개선 없음 |
+| E8 | 설정 B, 43-45의 새 label로 46-49 회복 | 1-42 label만 0.212, 43-45 label 418건 더하면 0.271, 4,182건 전부면 0.460 |
+| E8b | 설정 B, 옛 label도 10%일 때 semi-supervised로 더 빨리 회복하나 | Self-training과 LightGBM의 차이 판정 불가 |
+| E9 | 설정 B, 새 label 없이 adjustment 6종·Hedge 2종 | 35-49 전체에서 Baseline model(0.599)보다 높은 방법 없음. 폐쇄 뒤를 올리면 폐쇄 전을 내준다 |
 
 43번째 time step(다크마켓 폐쇄로 해석되는 시점) 이후에는 모든 방법의 F1이 0.1 아래로 떨어진다. X1에서 사후 최적 임계값으로도 F1 0.2를 넘지 못해, 임계값이 아니라 순위의 실패다. X5에서 원인을 확인했다. 폐쇄 전 불법 거래의 대부분은 수명이 짧은 입력 주소에서 나오는데, 폐쇄 후 불법 거래에는 이 유형이 없다.
 
-자세한 분석은 [docs/01_문제재정의_문헌_데이터.md](docs/01_문제재정의_문헌_데이터.md)에 있다.
+자세한 분석은 [docs/01_문제재정의_문헌_데이터.md](docs/01_문제재정의_문헌_데이터.md)에 있다. 설정 B의 unsupervised·semi-supervised와 43번째 time step 이후 분석은 [docs/02_설정B_unsupervised_semi_supervised.md](docs/02_설정B_unsupervised_semi_supervised.md)에 있다.
 
 ## 구성
 
@@ -65,7 +68,16 @@ e7c_report.py               E7c 선택 규칙 분석
 e7c_confirm.py              E7c 대표 방법을 seed 3-5로 다시 실행
 e7d_test_time_st.py         E7d test 기간 unlabeled 거래로 Self-training
 eval_reliability.py         bootstrap CI, top-k, calibration, ensemble (seed 6개)
-tests/                      E6·E7 테스트 (pytest)
+e8_shift_recovery.py        E8 43번째 time step 이후 새 label로 회복
+e8b_shift_ssl.py            E8b 옛 label도 적을 때의 회복 (semi-supervised)
+shift_analysis.py           43번째 time step 전후 cluster·feature 변화 (post-hoc)
+minority_analysis.py        single-input·multi-input group별 illicit probability 변화
+e9_minority_fix.py          E9 새 label 없는 adjustment 6종
+e9_hedge.py                 E9 Baseline model + multi-input specialist model
+theory_checks.py            docs/02 8장의 이론 점검
+report_tables.py            docs/02의 표를 results/에서 채운다 (--check: 맞는지만 확인)
+report_figures.py           docs/02의 그림 (figures/fig01-09)
+tests/                      설정 B 실험과 docs/02 표의 테스트 (pytest)
 results/                    실험 결과 CSV
 figures/                    그림
 docs/                       분석 문서
@@ -89,7 +101,7 @@ python x3_gnn.py                   # GPU 권장, pip install -r requirements-gnn
 python x4_address_leakage.py       # data/ellipticpp/, data/ellipticpp_lr/ 필요
 python x5_drift_profile.py
 
-# 설정 B unsupervised·semi-supervised (위에서부터 순서대로)
+# 설정 B (docs/02, 위에서부터 순서대로)
 python prep_diagnostics.py --setting B
 python prep_research_b.py
 python e6b_improved.py --setting B
@@ -102,6 +114,15 @@ python e7c_report.py
 python e7c_confirm.py
 python eval_reliability.py         # e7c_search·e7c_confirm이 저장한 results/*.joblib 예측을 읽는다
 python e7d_test_time_st.py
+python e8_shift_recovery.py
+python e8b_shift_ssl.py
+python shift_analysis.py
+python minority_analysis.py
+python e9_minority_fix.py
+python e9_hedge.py
+python theory_checks.py
+python report_figures.py
+python report_tables.py
 python -m pytest tests            # pip install pytest
 ```
 

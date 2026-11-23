@@ -4,7 +4,9 @@
 
 ## 2026-11-24
 
-### 설정 B의 unsupervised(E6)와 semi-supervised(E7)
+### 설정 B의 unsupervised(E6), semi-supervised(E7), 43번째 time step 이후(E8, E9)
+
+전체 보고서는 [docs/02_설정B_unsupervised_semi_supervised.md](docs/02_설정B_unsupervised_semi_supervised.md)다. 보고서의 표는 `report_tables.py`가 `results/`에서 채우고, `python report_tables.py --check`로 맞는지 확인한다.
 
 모든 실험은 설정 B(transaction-time feature 57개, `feature_cols(df, "time")`)로 했다. 분할은 `common.py`를 따른다. train 1-30으로 학습하고, validation 31-34에서 hyperparameter config와 threshold를 고른 뒤, 1-34로 다시 학습해 test 35-49에서 평가했다. PR-AUC는 `average_precision_score`다.
 
@@ -85,11 +87,29 @@ train label의 1, 5, 10, 50, 100%만 공개하고 나머지 label과 unknown 거
 - 처음에는 ensemble을 test 기간 전체(35-49)에서 rank로 바꿔 만들었다. 이렇게 하면 35의 score가 49의 score distribution을 본다. 고친 뒤 "ensemble이 가장 좋다"는 결론은 사라졌다. `e7c_report.py`와 `e7c_confirm.py`에서 이 계산을 지웠다. `tests/test_eval_reliability.py`는 뒤 time step을 바꾸거나 지워도 앞 time step의 score가 같은지 확인한다.
 - 직접 짠 Self-training 반복이 마지막 pseudo-label을 더한 뒤 다시 학습하지 않았다. 고친 뒤 scikit-learn `SelfTrainingClassifier`와 예측이 같은지 `tests/test_self_training.py`로 확인한다.
 
+#### 43번째 time step 이후 (`shift_analysis.py`, `minority_analysis.py`, E8, E8b, E9)
+
+- **무엇이 바뀌었나:** illicit 중 single-input 거래(input 수 `local_3`이 train set의 mode)가 1-34의 92.3%에서 43-49의 11.8%로 줄었다. single-input group의 illicit probability는 21.9%에서 0.6%가 되고, multi-input group은 1.7%에서 4.7%로 올랐다. illicit ratio만 바뀌었다면 두 group이 함께 내려가야 하므로, prior shift만으로는 설명되지 않는다.
+- **새 label 없이 (E9, `e9_minority_fix.py`, `e9_hedge.py`):** time-proxy를 뺀 54개 feature로 adjustment 6종과 Hedge 2종을 시험했다. 35-49 전체에서 Baseline model(0.599)보다 높은 방법은 없었다. 대부분 폐쇄 뒤를 올리는 대신 폐쇄 전을 내준다(Calibration + EM: 43-49 0.086 → 0.331, 35-42 0.721 → 0.130).
+- **새 label을 넣으면 (E8, `e8_shift_recovery.py`, seed 6개):** 1-42의 label 전부로 학습하면 46-49 PR-AUC가 0.212다. 43-45 label을 더하면 418건(그중 illicit 3-6건)에서 0.271, 1,046건에서 0.321, 4,182건 전부에서 0.460이다. 모두 기준보다 높다고 판정됐다.
+- **매 time step 다시 학습하면:** 43-49 time step별 PR-AUC mean이 0.175(한 번만 학습)에서 0.439(expanding window)가 된다. 바로 뒤 43-45는 다시 학습해도 0.150이고, 47부터 회복한다. label이 바로 들어온다고 가정한 upper bound다.
+- **옛 label도 적을 때 (E8b, `e8b_shift_ssl.py`):** 1-42 label 10%에 43-45 label을 더했다. Self-training과 LightGBM의 차이는 어느 조건에서도 판정할 수 없었다.
+
+#### 이론으로 본 해석 (`theory_checks.py`)
+
+결과를 본 뒤 같은 data에서 확인한 것이라 독립된 증명은 아니다.
+
+- **learning curve (Lec4):** 같은 시기(1-34에서 random으로 떼어 둔 20%)에서는 label 약 3천 건이면 PR-AUC 0.95에 이르지만, 35-42에서는 0.73 안팎에서 멈춘다. 같은 시기 값은 비슷한 거래가 양쪽에 들어가 optimistic이다.
+- **Self-training (Lec9):** label 1% model이 probability 0.95 이상으로 illicit이라고 확신한 예측은 같은 시기에서 95.3%, 35-42에서 82.8%가 맞고, 43-49에서는 0.3%만 맞는다.
+- **ensemble (Lec7):** Self-training과 LightGBM의 error correlation이 0.89-0.93으로 높다.
+- **unsupervised의 score 방향 (Lec9):** train set에서 illicit은 licit보다 10번째 neighbor가 훨씬 가깝다(median 0.06 대 2.22). anomaly score가 낮을수록 illicit인 것과 맞는다.
+- **폐쇄 뒤 PR-AUC (Lec3):** illicit ratio가 9.2%에서 2.5%로 줄었지만 ROC-AUC도 떨어졌다(Self-training 10%: 0.931 → 0.802). prior만의 문제는 아니다.
+
 #### 주의
 
 - test 35-49를 여러 번 보면서 실험했다. 수치는 optimistic일 수 있다.
 - 성능은 labeled 거래에서 잰 값이다. unlabeled 거래까지 포함한 실제 alert 성능은 아니다.
-- 43-49는 모든 방법이 0.1 아래다. 원인 분석과 새 label에 따른 회복은 다음 PR에서 올린다.
+- E8은 46-49 한 기간에서 잰 값이다. 판정은 seed 변동만 반영한다.
 
 ## 2026-11-13
 
