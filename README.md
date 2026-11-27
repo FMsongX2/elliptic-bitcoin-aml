@@ -28,6 +28,7 @@ Elliptic 데이터셋에서 불법 거래를 탐지하는 기계학습 팀 프�
 | X3 | GraphSAGE 대 같은 피처의 MLP 대 엣지를 섞은 그래프 | 165개 피처에서 PR-AUC가 MLP 0.675, GraphSAGE 0.736, 섞은 그래프 0.553, LightGBM 0.809 |
 | X4 | 주소 단위(Elliptic++)에서 누수 있는 피처와 없는 피처 | 시간 분할을 지키면 LightGBM F1 0.431 대 0.419 |
 | X5 | 폐쇄 전후 불법 거래의 피처 변화 | 깊이 2 트리 규칙을 만족하는 불법 거래가 35~42 구간 69.9%, 43~49 구간 0.0% |
+| X6 | GAT, GNN 임베딩 + LightGBM | 원 피처 + GAT 임베딩의 PR-AUC가 거래 자체 21개에서 0.419 → 0.584, 설정 B에서 0.594 → 0.612, 설정 A에서 0.808 → 0.714 |
 
 43번째 time step(다크마켓 폐쇄로 해석되는 시점) 이후에는 모든 방법의 F1이 0.1 아래로 떨어진다. X1에서 사후 최적 임계값으로도 F1 0.2를 넘지 못해, 임계값이 아니라 순위의 실패다. X5에서 원인을 확인했다. 폐쇄 전 불법 거래의 대부분은 수명이 짧은 입력 주소에서 나오는데, 폐쇄 후 불법 거래에는 이 유형이 없다.
 
@@ -49,6 +50,7 @@ x2_address_overlap.py       X2 주소 중복 (Elliptic++ 필요)
 x3_gnn.py                   X3 그래프의 순수 기여 (requirements-gnn.txt)
 x4_address_leakage.py       X4 주소 단위 누수 비교 (Elliptic++, 재계산 피처 필요)
 x5_drift_profile.py         X5 폐쇄 전후 피처 변화
+x6_gat_embedding.py         X6 GAT, GNN 임베딩 + LightGBM (requirements-gnn.txt)
 results/                    실험 결과 CSV
 figures/                    그림
 docs/                       분석 문서
@@ -71,6 +73,7 @@ python x2_address_overlap.py       # data/ellipticpp/ 필요
 python x3_gnn.py                   # GPU 권장, pip install -r requirements-gnn.txt
 python x4_address_leakage.py       # data/ellipticpp/, data/ellipticpp_lr/ 필요
 python x5_drift_profile.py
+python x6_gat_embedding.py         # GPU 권장, 약 25분
 ```
 
 ## 데이터
