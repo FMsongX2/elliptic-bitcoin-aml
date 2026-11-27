@@ -23,7 +23,7 @@ from joblib import Parallel, delayed
 from sklearn.metrics import average_precision_score, f1_score, precision_recall_curve
 from sklearn.tree import DecisionTreeClassifier
 
-from common import BASE, DARK_MARKET_STEP, evaluate, load_dataset, load_edges, log_result
+from common import BASE, DARK_MARKET_STEP, clear_results, evaluate, load_dataset, load_edges, log_result
 from fe_experiment import variants
 from feature_engineering import build_engineered_features
 
@@ -130,6 +130,7 @@ def oof_threshold(dev, preds):
 
 def main():
     plt.rcParams.update({"font.family": "Malgun Gothic", "axes.unicode_minus": False})
+    clear_results(EXPERIMENT)   # 다시 실행해도 results.csv에 같은 행이 쌓이지 않게
     df_all = load_dataset(labeled_only=False)
     fe = build_engineered_features(df_all, load_edges())
     df = df_all[df_all["y"].notna()].merge(fe, on="txId")
