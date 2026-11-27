@@ -92,7 +92,7 @@ def main():
     step_frames = {}
     for name in ["LogReg", "RandomForest", "LightGBM"]:
         seeds = [0] if name == "LogReg" else SEEDS
-        for feature_set in ["local", "all"]:
+        for feature_set in ["local", "all", "time"]:
             for seed in seeds:
                 prob, th = run_one(name, feature_set, seed, train, val, test)
                 if feature_set == "all" and seed == 0:

@@ -1,15 +1,145 @@
 ﻿timestamp,experiment,model,feature_set,seed,precision,recall,f1,pr_auc,threshold,note
-2026-11-13T14:28:18,E1,모두 불법,struct,42,0.065,1.0,0.122,0.065,모든 거래 = 불법,
-2026-11-13T14:28:18,E1,R2 분할,struct,42,0.0488,0.578,0.09,0.0536,out-degree >= 1,
-2026-11-13T14:28:18,E1,R2' 분할 반대,struct,42,0.0761,0.9178,0.1406,0.0937,out-degree <= 1,
-2026-11-13T14:28:18,E1,R3 다중 경유,struct,42,0.057,0.2705,0.0942,0.0604,peel chain >= 1,
-2026-11-13T14:28:19,E1,R4 조합,struct,42,0.0634,0.2447,0.1007,0.0646,peel chain >= 1 AND out-degree <= 1,
-2026-11-13T14:28:19,E1,트리(구조) 깊이 1,struct,42,0.0789,0.9252,0.1454,0.0779,"DecisionTree depth=1, threshold=0.05",
-2026-11-13T14:28:19,E1,트리(구조) 깊이 2,struct,42,0.1145,0.5928,0.192,0.099,"DecisionTree depth=2, threshold=0.09",
-2026-11-13T14:28:19,E1,트리(구조) 깊이 3,struct,42,0.1834,0.2696,0.2183,0.1213,"DecisionTree depth=3, threshold=0.16",
-2026-11-13T14:28:20,E1,트리(all) 깊이 1,all,42,0.2274,0.6907,0.3421,0.1771,"DecisionTree depth=1, threshold=0.05",
-2026-11-13T14:28:20,E1,트리(all) 깊이 2,all,42,0.9984,0.5863,0.7388,0.6588,"DecisionTree depth=2, threshold=0.19",
-2026-11-13T14:28:21,E1,트리(all) 깊이 3,all,42,0.5134,0.7073,0.595,0.6873,"DecisionTree depth=3, threshold=0.11",
+2026-11-15T12:24:56,E2,LogReg,local,0,0.3788,0.711,0.4942,0.2758,0.5,threshold=0.5
+2026-11-15T12:24:56,E2,LogReg,local,0,0.4181,0.6999,0.5235,0.2758,0.53,threshold=tuned_on_val
+2026-11-15T12:24:57,E2,LogReg,all,0,0.29,0.65,0.401,0.3608,0.5,threshold=0.5
+2026-11-15T12:24:57,E2,LogReg,all,0,0.4612,0.4995,0.4796,0.3608,0.77,threshold=tuned_on_val
+2026-11-15T12:24:57,E2,LogReg,time,0,0.205,0.5956,0.305,0.2083,0.5,threshold=0.5
+2026-11-15T12:24:57,E2,LogReg,time,0,0.2594,0.4404,0.3265,0.2083,0.58,threshold=tuned_on_val
+2026-11-15T12:25:44,E2,RandomForest,local,0,0.855,0.6971,0.7681,0.7732,0.5,threshold=0.5
+2026-11-15T12:25:44,E2,RandomForest,local,0,0.8839,0.6888,0.7743,0.7732,0.53,threshold=tuned_on_val
+2026-11-15T12:26:31,E2,RandomForest,local,1,0.8649,0.6916,0.7686,0.7731,0.5,threshold=0.5
+2026-11-15T12:26:31,E2,RandomForest,local,1,0.8885,0.6842,0.7731,0.7731,0.53,threshold=tuned_on_val
+2026-11-15T12:27:17,E2,RandomForest,local,2,0.8547,0.6953,0.7668,0.7741,0.5,threshold=0.5
+2026-11-15T12:27:17,E2,RandomForest,local,2,0.8547,0.6953,0.7668,0.7741,0.5,threshold=tuned_on_val
+2026-11-15T12:28:09,E2,RandomForest,all,0,0.94,0.7239,0.8179,0.7844,0.5,threshold=0.5
+2026-11-15T12:28:09,E2,RandomForest,all,0,0.9678,0.7211,0.8265,0.7844,0.54,threshold=tuned_on_val
+2026-11-15T12:29:00,E2,RandomForest,all,1,0.9356,0.7248,0.8169,0.7867,0.5,threshold=0.5
+2026-11-15T12:29:00,E2,RandomForest,all,1,0.9356,0.7248,0.8169,0.7867,0.5,threshold=tuned_on_val
+2026-11-15T12:29:51,E2,RandomForest,all,2,0.9345,0.7248,0.8164,0.7861,0.5,threshold=0.5
+2026-11-15T12:29:51,E2,RandomForest,all,2,0.9345,0.7248,0.8164,0.7861,0.5,threshold=tuned_on_val
+2026-11-15T12:30:39,E2,RandomForest,time,0,0.4777,0.4155,0.4444,0.4472,0.5,threshold=0.5
+2026-11-15T12:30:39,E2,RandomForest,time,0,0.5161,0.3407,0.4105,0.4472,0.52,threshold=tuned_on_val
+2026-11-15T12:31:28,E2,RandomForest,time,1,0.4485,0.386,0.4149,0.4194,0.5,threshold=0.5
+2026-11-15T12:31:28,E2,RandomForest,time,1,0.4064,0.4127,0.4095,0.4194,0.47,threshold=tuned_on_val
+2026-11-15T12:32:15,E2,RandomForest,time,2,0.4682,0.3666,0.4112,0.4267,0.5,threshold=0.5
+2026-11-15T12:32:15,E2,RandomForest,time,2,0.3621,0.446,0.3997,0.4267,0.44,threshold=tuned_on_val
+2026-11-15T12:32:19,E2,LightGBM,local,0,0.8826,0.7008,0.7813,0.7874,0.5,threshold=0.5
+2026-11-15T12:32:19,E2,LightGBM,local,0,0.9531,0.6759,0.7909,0.7874,0.84,threshold=tuned_on_val
+2026-11-15T12:32:23,E2,LightGBM,local,1,0.88,0.6971,0.7779,0.7892,0.5,threshold=0.5
+2026-11-15T12:32:23,E2,LightGBM,local,1,0.8332,0.7147,0.7694,0.7892,0.33,threshold=tuned_on_val
+2026-11-15T12:32:27,E2,LightGBM,local,2,0.8806,0.7018,0.7811,0.7913,0.5,threshold=0.5
+2026-11-15T12:32:27,E2,LightGBM,local,2,0.9384,0.6888,0.7945,0.7913,0.76,threshold=tuned_on_val
+2026-11-15T12:32:33,E2,LightGBM,all,0,0.9563,0.7276,0.8264,0.8077,0.5,threshold=0.5
+2026-11-15T12:32:33,E2,LightGBM,all,0,0.9199,0.7313,0.8148,0.8077,0.28,threshold=tuned_on_val
+2026-11-15T12:32:38,E2,LightGBM,all,1,0.9494,0.7276,0.8238,0.8054,0.5,threshold=0.5
+2026-11-15T12:32:38,E2,LightGBM,all,1,0.9189,0.7322,0.815,0.8054,0.31,threshold=tuned_on_val
+2026-11-15T12:32:44,E2,LightGBM,all,2,0.9528,0.7276,0.8251,0.8114,0.5,threshold=0.5
+2026-11-15T12:32:44,E2,LightGBM,all,2,0.9307,0.7313,0.819,0.8114,0.33,threshold=tuned_on_val
+2026-11-15T12:32:46,E2,LightGBM,time,0,0.6224,0.5023,0.556,0.5999,0.5,threshold=0.5
+2026-11-15T12:32:46,E2,LightGBM,time,0,0.6075,0.5115,0.5554,0.5999,0.47,threshold=tuned_on_val
+2026-11-15T12:32:49,E2,LightGBM,time,1,0.5935,0.5097,0.5484,0.5827,0.5,threshold=0.5
+2026-11-15T12:32:49,E2,LightGBM,time,1,0.5449,0.5429,0.5439,0.5827,0.39,threshold=tuned_on_val
+2026-11-15T12:32:52,E2,LightGBM,time,2,0.5654,0.4986,0.5299,0.5723,0.5,threshold=0.5
+2026-11-15T12:32:52,E2,LightGBM,time,2,0.554,0.5115,0.5319,0.5723,0.47,threshold=tuned_on_val
+2026-11-15T12:34:01,E3,LightGBM,local,0,0.8826,0.7008,0.7813,0.7874,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:03,E3,LightGBM,local,1,0.88,0.6971,0.7779,0.7892,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:05,E3,LightGBM,local,2,0.8806,0.7018,0.7811,0.7913,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:07,E3,LightGBM,local+struct,0,0.8903,0.7045,0.7866,0.7923,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:09,E3,LightGBM,local+struct,1,0.8931,0.7018,0.7859,0.7941,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:10,E3,LightGBM,local+struct,2,0.8834,0.7064,0.785,0.7927,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:14,E3,LightGBM,local+nbr,0,0.9148,0.7239,0.8082,0.8025,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:18,E3,LightGBM,local+nbr,1,0.919,0.723,0.8093,0.8004,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:22,E3,LightGBM,local+nbr,2,0.9214,0.7248,0.8114,0.801,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:27,E3,LightGBM,local+struct+nbr+nbr2,0,0.941,0.7221,0.8171,0.8068,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:32,E3,LightGBM,local+struct+nbr+nbr2,1,0.9457,0.723,0.8195,0.8054,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:37,E3,LightGBM,local+struct+nbr+nbr2,2,0.9445,0.723,0.819,0.8045,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:40,E3,LightGBM,all,0,0.9563,0.7276,0.8264,0.8077,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:43,E3,LightGBM,all,1,0.9494,0.7276,0.8238,0.8054,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:46,E3,LightGBM,all,2,0.9528,0.7276,0.8251,0.8114,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:48,E3,LightGBM,all+struct,0,0.9369,0.7267,0.8185,0.8092,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:51,E3,LightGBM,all+struct,1,0.955,0.7258,0.8248,0.8076,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:34:54,E3,LightGBM,all+struct,2,0.9425,0.7267,0.8206,0.8077,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:35:00,E3,LightGBM,all+struct+nbr+nbr2,0,0.9665,0.7202,0.8254,0.8122,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:35:07,E3,LightGBM,all+struct+nbr+nbr2,1,0.9679,0.7239,0.8283,0.8126,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:35:13,E3,LightGBM,all+struct+nbr+nbr2,2,0.9666,0.7211,0.826,0.814,0.5,"setting=A, threshold=0.5"
+2026-11-15T12:35:15,E3,LightGBM,time,0,0.6224,0.5023,0.556,0.5999,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:16,E3,LightGBM,time,1,0.5935,0.5097,0.5484,0.5827,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:17,E3,LightGBM,time,2,0.5654,0.4986,0.5299,0.5723,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:19,E3,LightGBM,time+pstruct,0,0.622,0.4801,0.5419,0.595,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:20,E3,LightGBM,time+pstruct,1,0.602,0.4931,0.5421,0.5902,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:22,E3,LightGBM,time+pstruct,2,0.6105,0.4746,0.534,0.5831,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:24,E3,LightGBM,time+pnbr,0,0.6568,0.4912,0.5621,0.6067,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:26,E3,LightGBM,time+pnbr,1,0.6402,0.4765,0.5463,0.5945,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:28,E3,LightGBM,time+pnbr,2,0.6522,0.5125,0.5739,0.611,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:30,E3,LightGBM,time+pstruct+pnbr,0,0.6714,0.4774,0.558,0.5981,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:32,E3,LightGBM,time+pstruct+pnbr,1,0.6564,0.5115,0.575,0.6093,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:35:33,E3,LightGBM,time+pstruct+pnbr,2,0.6663,0.5051,0.5746,0.6112,0.5,"setting=B, threshold=0.5"
+2026-11-15T12:36:36,E1,모두 불법,rule,42,0.065,1.0,0.122,0.065,0.5,setting=A; 모든 거래 = 불법
+2026-11-15T12:36:36,E1,모두 불법,rule,42,0.065,1.0,0.122,0.065,0.5,setting=B; 모든 거래 = 불법
+2026-11-15T12:36:36,E1,R1 대량 이동,rule,42,0.0169,0.1237,0.0298,0.0436,0.5,setting=B; 거래 금액(local_0) >= 상위 50.0%
+2026-11-15T12:36:36,E1,R2 분할,rule,42,0.0253,0.3657,0.0473,0.0504,0.5,setting=B; 출력 수 >= 2
+2026-11-15T12:36:36,E1,R2' 분할 반대,rule,42,0.6742,0.6343,0.6537,0.4557,0.5,setting=B; 출력 수 <= 1
+2026-11-15T12:36:36,E1,R3 다중 경유,rule,42,0.0137,0.0406,0.0204,0.0573,0.5,setting=B; peel chain(입력1→출력2) >= 2
+2026-11-15T12:36:36,E1,R4 조합,rule,42,0.0147,0.1127,0.0261,0.0593,0.5,setting=B; R1·R2·R3 중 2개 이상
+2026-11-15T12:36:36,E1,R2-A 분할,rule,42,0.0488,0.578,0.09,0.0536,0.5,setting=A; out-degree >= 1
+2026-11-15T12:36:36,E1,R2'-A 분할 반대,rule,42,0.0761,0.9178,0.1406,0.0937,0.5,setting=A; out-degree <= 1
+2026-11-15T12:36:36,E1,R3-A 다중 경유,rule,42,0.057,0.2705,0.0942,0.0604,0.5,setting=A; peel chain 유사 패턴 >= 1
+2026-11-15T12:36:37,E1,R4-A 조합,rule,42,0.0634,0.2447,0.1007,0.0646,0.5,setting=A; peel chain >= 1 AND out-degree <= 1
+2026-11-15T12:36:37,E1,트리(구조) 깊이 1,구조,42,0.0789,0.9252,0.1454,0.0779,0.5,"setting=A; DecisionTree depth=1, threshold=0.05"
+2026-11-15T12:36:37,E1,트리(구조) 깊이 2,구조,42,0.1145,0.5928,0.192,0.099,0.5,"setting=A; DecisionTree depth=2, threshold=0.09"
+2026-11-15T12:36:37,E1,트리(구조) 깊이 3,구조,42,0.1834,0.2696,0.2183,0.1213,0.5,"setting=A; DecisionTree depth=3, threshold=0.16"
+2026-11-15T12:36:38,E1,트리(all) 깊이 1,all,42,0.2274,0.6907,0.3421,0.1771,0.5,"setting=A; DecisionTree depth=1, threshold=0.05"
+2026-11-15T12:36:38,E1,트리(all) 깊이 2,all,42,0.9984,0.5863,0.7388,0.6588,0.5,"setting=A; DecisionTree depth=2, threshold=0.19"
+2026-11-15T12:36:39,E1,트리(all) 깊이 3,all,42,0.5134,0.7073,0.595,0.6873,0.5,"setting=A; DecisionTree depth=3, threshold=0.11"
+2026-11-15T12:36:39,E1,트리(과거 구조) 깊이 1,과거 구조,42,0.065,1.0,0.122,0.0649,0.5,"setting=B; DecisionTree depth=1, threshold=0.05"
+2026-11-15T12:36:39,E1,트리(과거 구조) 깊이 2,과거 구조,42,0.0718,0.9492,0.1335,0.0714,0.5,"setting=B; DecisionTree depth=2, threshold=0.05"
+2026-11-15T12:36:40,E1,트리(과거 구조) 깊이 3,과거 구조,42,0.1391,0.7895,0.2365,0.1241,0.5,"setting=B; DecisionTree depth=3, threshold=0.09"
+2026-11-15T12:36:40,E1,트리(time) 깊이 1,time,42,0.6742,0.6343,0.6537,0.4514,0.5,"setting=B; DecisionTree depth=1, threshold=0.05"
+2026-11-15T12:36:40,E1,트리(time) 깊이 2,time,42,0.8232,0.6233,0.7094,0.5376,0.5,"setting=B; DecisionTree depth=2, threshold=0.12"
+2026-11-15T12:36:40,E1,트리(time) 깊이 3,time,42,0.8242,0.6233,0.7098,0.5499,0.5,"setting=B; DecisionTree depth=3, threshold=0.31"
+2026-11-18T17:35:36,FE,LightGBM 기본,B0 time,0,0.6075,0.5115,0.5554,0.5999,"setting=B, threshold=val",
+2026-11-18T17:35:36,FE,LightGBM 규제,B0 time,0,0.5795,0.5383,0.5582,0.6326,"setting=B, threshold=val",
+2026-11-18T17:35:38,FE,LightGBM 기본,B0 time,1,0.5449,0.5429,0.5439,0.5827,"setting=B, threshold=val",
+2026-11-18T17:35:39,FE,LightGBM 규제,B0 time,1,0.5649,0.5669,0.5659,0.6351,"setting=B, threshold=val",
+2026-11-18T17:35:40,FE,LightGBM 기본,B0 time,2,0.554,0.5115,0.5319,0.5723,"setting=B, threshold=val",
+2026-11-18T17:35:41,FE,LightGBM 규제,B0 time,2,0.5432,0.5753,0.5587,0.6265,"setting=B, threshold=val",
+2026-11-18T17:35:45,FE,결정 트리,B0 time,0,0.8175,0.542,0.6519,0.4829,"setting=B, threshold=val, depth=4",
+2026-11-18T17:35:46,FE,LightGBM 기본,B1 -height,0,0.6425,0.5309,0.5814,0.6081,"setting=B, threshold=val",
+2026-11-18T17:35:47,FE,LightGBM 규제,B1 -height,0,0.596,0.5503,0.5723,0.6282,"setting=B, threshold=val",
+2026-11-18T17:35:49,FE,LightGBM 기본,B1 -height,1,0.742,0.4515,0.5614,0.5976,"setting=B, threshold=val",
+2026-11-18T17:35:49,FE,LightGBM 규제,B1 -height,1,0.5337,0.5771,0.5546,0.6254,"setting=B, threshold=val",
+2026-11-18T17:35:51,FE,LightGBM 기본,B1 -height,2,0.7121,0.4728,0.5683,0.6062,"setting=B, threshold=val",
+2026-11-18T17:35:51,FE,LightGBM 규제,B1 -height,2,0.5508,0.5605,0.5556,0.6248,"setting=B, threshold=val",
+2026-11-18T17:35:54,FE,결정 트리,B1 -height,0,0.1209,0.6205,0.2023,0.4778,"setting=B, threshold=val, depth=4",
+2026-11-18T17:35:56,FE,LightGBM 기본,B2 +shape,0,0.5826,0.5245,0.552,0.5959,"setting=B, threshold=val",
+2026-11-18T17:35:56,FE,LightGBM 규제,B2 +shape,0,0.5341,0.578,0.5552,0.6158,"setting=B, threshold=val",
+2026-11-18T17:35:58,FE,LightGBM 기본,B2 +shape,1,0.6525,0.4958,0.5635,0.5915,"setting=B, threshold=val",
+2026-11-18T17:35:58,FE,LightGBM 규제,B2 +shape,1,0.6139,0.5623,0.587,0.6274,"setting=B, threshold=val",
+2026-11-18T17:36:00,FE,LightGBM 기본,B2 +shape,2,0.7153,0.4663,0.5646,0.5993,"setting=B, threshold=val",
+2026-11-18T17:36:01,FE,LightGBM 규제,B2 +shape,2,0.5398,0.5826,0.5604,0.6239,"setting=B, threshold=val",
+2026-11-18T17:36:03,FE,결정 트리,B2 +shape,0,0.8166,0.5346,0.6462,0.4738,"setting=B, threshold=val, depth=3",
+2026-11-18T17:36:06,FE,LightGBM 기본,B3 +pred,0,0.5595,0.5078,0.5324,0.5757,"setting=B, threshold=val",
+2026-11-18T17:36:06,FE,LightGBM 규제,B3 +pred,0,0.5518,0.5753,0.5633,0.6217,"setting=B, threshold=val",
+2026-11-18T17:36:08,FE,LightGBM 기본,B3 +pred,1,0.578,0.5374,0.5569,0.5962,"setting=B, threshold=val",
+2026-11-18T17:36:09,FE,LightGBM 규제,B3 +pred,1,0.4763,0.602,0.5318,0.6142,"setting=B, threshold=val",
+2026-11-18T17:36:11,FE,LightGBM 기본,B3 +pred,2,0.5875,0.5051,0.5432,0.5805,"setting=B, threshold=val",
+2026-11-18T17:36:12,FE,LightGBM 규제,B3 +pred,2,0.5447,0.5743,0.5591,0.6281,"setting=B, threshold=val",
+2026-11-18T17:36:14,FE,결정 트리,B3 +pred,0,0.8166,0.5346,0.6462,0.4738,"setting=B, threshold=val, depth=3",
+2026-11-18T17:36:16,FE,LightGBM 기본,B4 pct only,0,0.5096,0.6343,0.5652,0.6844,"setting=B, threshold=val",
+2026-11-18T17:36:17,FE,LightGBM 규제,B4 pct only,0,0.6035,0.603,0.6032,0.6745,"setting=B, threshold=val",
+2026-11-18T17:36:18,FE,LightGBM 기본,B4 pct only,1,0.4509,0.6704,0.5392,0.6838,"setting=B, threshold=val",
+2026-11-18T17:36:19,FE,LightGBM 규제,B4 pct only,1,0.7022,0.5965,0.645,0.6753,"setting=B, threshold=val",
+2026-11-18T17:36:20,FE,LightGBM 기본,B4 pct only,2,0.5163,0.6574,0.5784,0.6959,"setting=B, threshold=val",
+2026-11-18T17:36:21,FE,LightGBM 규제,B4 pct only,2,0.5568,0.6242,0.5886,0.6696,"setting=B, threshold=val",
+2026-11-18T17:36:24,FE,결정 트리,B4 pct only,0,0.8232,0.6233,0.7094,0.5434,"setting=B, threshold=val, depth=2",
+2026-11-18T17:36:27,FE,LightGBM 기본,B5 +pct,0,0.5946,0.5919,0.5932,0.6639,"setting=B, threshold=val",
+2026-11-18T17:36:27,FE,LightGBM 규제,B5 +pct,0,0.629,0.5808,0.6039,0.6562,"setting=B, threshold=val",
+2026-11-18T17:36:30,FE,LightGBM 기본,B5 +pct,1,0.7459,0.542,0.6278,0.6752,"setting=B, threshold=val",
+2026-11-18T17:36:30,FE,LightGBM 규제,B5 +pct,1,0.5908,0.5826,0.5867,0.6551,"setting=B, threshold=val",
+2026-11-18T17:36:33,FE,LightGBM 기본,B5 +pct,2,0.7262,0.5485,0.6249,0.6729,"setting=B, threshold=val",
+2026-11-18T17:36:34,FE,LightGBM 규제,B5 +pct,2,0.666,0.5743,0.6168,0.6568,"setting=B, threshold=val",
+2026-11-18T17:36:39,FE,결정 트리,B5 +pct,0,0.7157,0.53,0.609,0.5206,"setting=B, threshold=val, depth=6",
+2026-11-22T14:32:47,FCV,LightGBM 규제,B2 +shape,-1,0.544,0.5762,0.5596,0.6243,"setting=B, forward-CV selected, threshold=oof 0.335",
 2026-11-13T17:40:43,X1,LightGBM,tx,0,0.5511,0.289,0.3792,0.4297,0.5,threshold=0.5
 2026-11-13T17:40:43,X1,LightGBM,tx,1,0.5009,0.2604,0.3426,0.3977,0.5,threshold=0.5
 2026-11-13T17:40:44,X1,LightGBM,tx,2,0.5696,0.2419,0.3396,0.422,0.5,threshold=0.5
@@ -34,55 +164,6 @@
 2026-11-13T17:40:59,X1,LightGBM,all,0,0.9495,0.7295,0.8251,0.808,0.5,threshold=0.5
 2026-11-13T17:41:00,X1,LightGBM,all,1,0.9472,0.7285,0.8236,0.8068,0.5,threshold=0.5
 2026-11-13T17:41:02,X1,LightGBM,all,2,0.9494,0.7276,0.8238,0.8107,0.5,threshold=0.5
-2026-11-13T17:41:10,E2,LogReg,local,0,0.3797,0.711,0.495,0.2779,0.5,threshold=0.5
-2026-11-13T17:41:10,E2,LogReg,local,0,0.4204,0.6999,0.5253,0.2779,0.53,threshold=tuned_on_val
-2026-11-13T17:41:16,E2,LogReg,all,0,0.2914,0.6537,0.4031,0.3601,0.5,threshold=0.5
-2026-11-13T17:41:16,E2,LogReg,all,0,0.4604,0.5051,0.4817,0.3601,0.77,threshold=tuned_on_val
-2026-11-13T17:41:48,E2,RandomForest,local,0,0.8618,0.7082,0.7775,0.7777,0.5,threshold=0.5
-2026-11-13T17:41:48,E2,RandomForest,local,0,0.8618,0.7082,0.7775,0.7777,0.5,threshold=tuned_on_val
-2026-11-13T17:42:20,E2,RandomForest,local,1,0.8576,0.7064,0.7747,0.7772,0.5,threshold=0.5
-2026-11-13T17:42:20,E2,RandomForest,local,1,0.7988,0.7184,0.7564,0.7772,0.44,threshold=tuned_on_val
-2026-11-13T17:42:54,E2,RandomForest,local,2,0.8602,0.7045,0.7746,0.7758,0.5,threshold=0.5
-2026-11-13T17:42:54,E2,RandomForest,local,2,0.8508,0.7054,0.7713,0.7758,0.49,threshold=tuned_on_val
-2026-11-13T17:43:28,E2,RandomForest,all,0,0.9323,0.7248,0.8156,0.786,0.5,threshold=0.5
-2026-11-13T17:43:28,E2,RandomForest,all,0,0.9514,0.723,0.8216,0.786,0.52,threshold=tuned_on_val
-2026-11-13T17:44:03,E2,RandomForest,all,1,0.9333,0.7239,0.8154,0.7846,0.5,threshold=0.5
-2026-11-13T17:44:03,E2,RandomForest,all,1,0.9214,0.7248,0.8114,0.7846,0.49,threshold=tuned_on_val
-2026-11-13T17:44:37,E2,RandomForest,all,2,0.9538,0.7239,0.8231,0.7851,0.5,threshold=0.5
-2026-11-13T17:44:37,E2,RandomForest,all,2,0.9538,0.7239,0.8231,0.7851,0.5,threshold=tuned_on_val
-2026-11-13T17:45:03,E2,LightGBM,local,0,0.8744,0.7008,0.7781,0.7898,0.5,threshold=0.5
-2026-11-13T17:45:03,E2,LightGBM,local,0,0.9476,0.6842,0.7946,0.7898,0.79,threshold=tuned_on_val
-2026-11-13T17:45:05,E2,LightGBM,local,1,0.8792,0.699,0.7788,0.7882,0.5,threshold=0.5
-2026-11-13T17:45:05,E2,LightGBM,local,1,0.8658,0.7027,0.7757,0.7882,0.45,threshold=tuned_on_val
-2026-11-13T17:45:06,E2,LightGBM,local,2,0.8837,0.7018,0.7823,0.7892,0.5,threshold=0.5
-2026-11-13T17:45:06,E2,LightGBM,local,2,0.8544,0.7101,0.7756,0.7892,0.4,threshold=tuned_on_val
-2026-11-13T17:45:09,E2,LightGBM,all,0,0.9495,0.7295,0.8251,0.808,0.5,threshold=0.5
-2026-11-13T17:45:09,E2,LightGBM,all,0,0.9406,0.7313,0.8229,0.808,0.42,threshold=tuned_on_val
-2026-11-13T17:45:12,E2,LightGBM,all,1,0.9472,0.7285,0.8236,0.8068,0.5,threshold=0.5
-2026-11-13T17:45:12,E2,LightGBM,all,1,0.9148,0.7341,0.8145,0.8068,0.33,threshold=tuned_on_val
-2026-11-13T17:45:15,E2,LightGBM,all,2,0.9494,0.7276,0.8238,0.8107,0.5,threshold=0.5
-2026-11-13T17:45:15,E2,LightGBM,all,2,0.9631,0.7239,0.8266,0.8107,0.58,threshold=tuned_on_val
-2026-11-13T17:45:21,E3,LightGBM,local,0,0.8744,0.7008,0.7781,0.7898,0.5,threshold=0.5
-2026-11-13T17:45:22,E3,LightGBM,local,1,0.8792,0.699,0.7788,0.7882,0.5,threshold=0.5
-2026-11-13T17:45:23,E3,LightGBM,local,2,0.8837,0.7018,0.7823,0.7892,0.5,threshold=0.5
-2026-11-13T17:45:24,E3,LightGBM,local+struct,0,0.8873,0.6981,0.7814,0.7919,0.5,threshold=0.5
-2026-11-13T17:45:25,E3,LightGBM,local+struct,1,0.8828,0.7027,0.7825,0.7934,0.5,threshold=0.5
-2026-11-13T17:45:26,E3,LightGBM,local+struct,2,0.8849,0.7027,0.7833,0.7938,0.5,threshold=0.5
-2026-11-13T17:45:28,E3,LightGBM,local+nbr,0,0.9179,0.723,0.8089,0.8014,0.5,threshold=0.5
-2026-11-13T17:45:30,E3,LightGBM,local+nbr,1,0.9191,0.7239,0.8099,0.8014,0.5,threshold=0.5
-2026-11-13T17:45:32,E3,LightGBM,local+nbr,2,0.9265,0.7211,0.811,0.8011,0.5,threshold=0.5
-2026-11-13T17:45:34,E3,LightGBM,local+struct+nbr+nbr2,0,0.941,0.7221,0.8171,0.8068,0.5,threshold=0.5
-2026-11-13T17:45:37,E3,LightGBM,local+struct+nbr+nbr2,1,0.946,0.7276,0.8225,0.8052,0.5,threshold=0.5
-2026-11-13T17:45:39,E3,LightGBM,local+struct+nbr+nbr2,2,0.9467,0.7221,0.8193,0.8074,0.5,threshold=0.5
-2026-11-13T17:45:41,E3,LightGBM,all,0,0.9495,0.7295,0.8251,0.808,0.5,threshold=0.5
-2026-11-13T17:45:42,E3,LightGBM,all,1,0.9472,0.7285,0.8236,0.8068,0.5,threshold=0.5
-2026-11-13T17:45:43,E3,LightGBM,all,2,0.9494,0.7276,0.8238,0.8107,0.5,threshold=0.5
-2026-11-13T17:45:45,E3,LightGBM,all+struct,0,0.9379,0.7248,0.8177,0.8053,0.5,threshold=0.5
-2026-11-13T17:45:46,E3,LightGBM,all+struct,1,0.9496,0.7313,0.8263,0.8089,0.5,threshold=0.5
-2026-11-13T17:45:49,E3,LightGBM,all+struct,2,0.9472,0.7295,0.8242,0.8086,0.5,threshold=0.5
-2026-11-13T17:46:11,E3,LightGBM,all+struct+nbr+nbr2,0,0.9703,0.723,0.8286,0.8083,0.5,threshold=0.5
-2026-11-13T17:46:13,E3,LightGBM,all+struct+nbr+nbr2,1,0.9666,0.7221,0.8266,0.81,0.5,threshold=0.5
-2026-11-13T17:46:16,E3,LightGBM,all+struct+nbr+nbr2,2,0.9654,0.7211,0.8256,0.8156,0.5,threshold=0.5
 2026-11-13T18:31:39,X3,mlp,tx,0,0.8002,0.6251,0.7019,0.502,0.5,threshold=0.5
 2026-11-13T18:31:45,X3,mlp,tx,1,0.7969,0.627,0.7018,0.4513,0.5,threshold=0.5
 2026-11-13T18:31:50,X3,mlp,tx,2,0.7452,0.4672,0.5743,0.4478,0.5,threshold=0.5

@@ -3,6 +3,9 @@
 라벨은 전혀 쓰지 않는다(누수 없음). 엣지는 같은 time step 안에서만 이어지므로
 모든 피처는 사실상 time step별 그래프 안에서 계산된다.
 
+- build_graph_features      : 설정 A용. 앞뒤 연결을 모두 쓴다(후속 거래 = 미래 정보 포함)
+- build_past_graph_features : 설정 B용. 선행 거래(과거) 쪽 연결만 쓴다
+
     from graph_features import build_graph_features
     gf = build_graph_features(load_dataset(labeled_only=False), load_edges())  # txId + g_*/nin_*/nout_*/n2_* 열
 
@@ -111,6 +114,65 @@ def build_graph_features(df_all, edges):
     return pd.DataFrame(feats)
 
 
+def build_past_graph_features(df_all, edges):
+    """설정 B용: 거래 시점에 알 수 있는 과거 쪽 연결(선행 거래)만 쓴 그래프 피처.
+
+    out-degree, PageRank, 후속 거래 평균처럼 나중에 생기는 연결을 쓰는 값은 넣지 않는다.
+    이웃 평균도 주소 통계(미래 포함)가 아닌 거래 자체 피처(TX 21개)만 평균한다.
+
+    - p_in_deg            : 선행 거래 수
+    - p_pred_in_deg_mean/max : 선행 거래들의 선행 거래 수
+    - p_anc2              : 2단계 안의 조상 거래 수
+    - p_peel_chain        : 실제 peel chain 모양(입력 1개 → 출력 2개) 거래가 과거 방향으로 몇 번 연속됐는지
+                            (입출력 수는 local_3, local_4를 개수로 되돌려 쓴다)
+    - pin_*  / p2in_*     : 1단계 / 2단계 조상 거래의 TX 피처 평균
+    """
+    from common import TX, z_to_count
+
+    n = len(df_all)
+    pos = pd.Series(np.arange(n), index=df_all["txId"].values)
+    src = pos.loc[edges["txId1"]].values
+    dst = pos.loc[edges["txId2"]].values
+    A = sp.csr_matrix((np.ones(len(src)), (src, dst)), shape=(n, n))
+    P = A.T.tocsr()                         # P[i, j] = 1 이면 j가 i의 선행 거래
+    P2 = ((P @ P + P) > 0).astype(float).tocsr()
+
+    in_deg = np.asarray(P.sum(axis=1)).ravel()
+    pred_in_mean = np.divide(P @ in_deg, in_deg, out=np.zeros(n), where=in_deg > 0)
+    pred_in_max = P.multiply(in_deg[None, :]).max(axis=1).toarray().ravel()
+
+    n_in = z_to_count(df_all["local_3"].values)
+    n_out = z_to_count(df_all["local_4"].values)
+    is_peel = (n_in == 1) & (n_out == 2)
+    pred = np.full(n, -1)
+    single = np.flatnonzero(in_deg == 1)
+    pred[single] = P.indices[P.indptr[single]]
+    chain, has_pred = is_peel.astype(int), pred >= 0
+    for _ in range(n):  # DAG라서 가장 긴 체인 길이 안에 수렴한다
+        prev = np.zeros_like(chain)
+        prev[has_pred] = chain[pred[has_pred]]
+        new = np.where(is_peel, 1 + prev, 0)
+        if np.array_equal(new, chain):
+            break
+        chain = new
+
+    feats = {
+        "txId": df_all["txId"].values,
+        "p_in_deg": in_deg,
+        "p_pred_in_deg_mean": pred_in_mean,
+        "p_pred_in_deg_max": pred_in_max,
+        "p_anc2": np.asarray(P2.sum(axis=1)).ravel(),
+        "p_peel_chain": chain,
+    }
+    X = df_all[TX].to_numpy(dtype=np.float32)
+    for prefix, M in {"pin": _row_normalize(P) @ X, "p2in": _row_normalize(P2) @ X}.items():
+        for j, c in enumerate(TX):
+            feats[f"{prefix}_{c}"] = M[:, j].astype(np.float32)
+    return pd.DataFrame(feats)
+
+
 STRUCT_PREFIX = "g_"
 NBR_PREFIXES = ("nin_", "nout_")
 NBR2_PREFIX = "n2_"
+PAST_STRUCT_PREFIX = "p_"
+PAST_NBR_PREFIXES = ("pin_", "p2in_")
