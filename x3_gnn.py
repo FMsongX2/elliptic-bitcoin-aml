@@ -23,7 +23,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch import nn
-from torch_geometric.nn import SAGEConv
+from torch_geometric.nn import GATConv, SAGEConv
 from torch_geometric.utils import subgraph
 
 from common import (BASE, DARK_MARKET_STEP, TEST_STEPS, TRAIN_STEPS, VAL_STEPS, clear_results, evaluate,
@@ -41,24 +41,39 @@ LR = 0.01
 WEIGHT_DECAY = 5e-4
 EPOCHS = 300
 CLIP = 10.0  # z-score 피처의 긴 꼬리를 자른다. 모든 모델에 같게 적용한다
+GAT_HEADS = 4  # 머리 4개 × 32차원을 이어 붙여 은닉 128을 맞춘다
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
+def make_layer(kind, n_in):
+    if kind == "mlp":
+        return nn.Linear(n_in, HIDDEN)
+    if kind == "sage":
+        return SAGEConv(n_in, HIDDEN)
+    if kind == "gat":
+        return GATConv(n_in, HIDDEN // GAT_HEADS, heads=GAT_HEADS)
+    raise ValueError(kind)
+
+
 class Net(nn.Module):
-    def __init__(self, n_in, use_graph):
+    """2층 인코더(은닉 128) + 선형 분류기. kind가 연결 정보를 쓰는 방식을 정한다."""
+
+    def __init__(self, n_in, kind):
         super().__init__()
-        layer = SAGEConv if use_graph else nn.Linear
-        self.use_graph = use_graph
-        self.l1, self.l2 = layer(n_in, HIDDEN), layer(HIDDEN, HIDDEN)
+        self.use_graph = kind != "mlp"
+        self.l1, self.l2 = make_layer(kind, n_in), make_layer(kind, HIDDEN)
         self.head = nn.Linear(HIDDEN, 1)
         self.drop = nn.Dropout(DROPOUT)
 
-    def forward(self, x, edge_index):
+    def embed(self, x, edge_index):
         for layer in (self.l1, self.l2):
             x = layer(x, edge_index) if self.use_graph else layer(x)
             x = self.drop(torch.relu(x))
-        return self.head(x).squeeze(-1)
+        return x
+
+    def forward(self, x, edge_index):
+        return self.head(self.embed(x, edge_index)).squeeze(-1)
 
 
 def build_edge_index(df, edges, shuffle_seed=None):
@@ -103,18 +118,18 @@ def fit(model, train):
     return model
 
 
-def run_one(x, y, edge_index, step, use_graph, seed):
+def run_one(x, y, edge_index, step, kind, seed):
     train = part(x, y, edge_index, step, TRAIN_STEPS)
     val = part(x, y, edge_index, step, VAL_STEPS)
     trainval = part(x, y, edge_index, step, [*TRAIN_STEPS, *VAL_STEPS])
     tx, ty, t_edges, t_labeled = part(x, y, edge_index, step, TEST_STEPS)
 
     torch.manual_seed(seed)
-    model = fit(Net(x.shape[1], use_graph).to(DEVICE), train)
+    model = fit(Net(x.shape[1], kind).to(DEVICE), train)
     threshold = tune_threshold(val[1][val[3]].cpu().numpy(), predict(model, val[0], val[2], val[3]))
 
     torch.manual_seed(seed)
-    model = fit(Net(x.shape[1], use_graph).to(DEVICE), trainval)
+    model = fit(Net(x.shape[1], kind).to(DEVICE), trainval)
     prob = predict(model, tx, t_edges, t_labeled)
     test_step = step[torch.isin(step, torch.tensor(list(TEST_STEPS), device=DEVICE))][t_labeled].cpu().numpy()
     return prob, ty[t_labeled].cpu().numpy().astype(int), test_step, threshold
@@ -136,7 +151,8 @@ def main():
             per_seed = []
             for seed in SEEDS:
                 edge_index = build_edge_index(df, edges, seed) if graph == "shuffled" else real_edges
-                prob, truth, test_step, threshold = run_one(x, y, edge_index, step, graph != "mlp", seed)
+                kind = "mlp" if graph == "mlp" else "sage"
+                prob, truth, test_step, threshold = run_one(x, y, edge_index, step, kind, seed)
                 log_result(EXPERIMENT, graph, name, seed, evaluate(truth, prob, 0.5), "threshold=0.5")
                 periods = {"35_49": np.ones(len(truth), bool),
                            "35_42": test_step < DARK_MARKET_STEP,
