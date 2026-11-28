@@ -175,7 +175,7 @@ def main():
             ("B", "E3", "time+pstruct+pnbr", "LightGBM (E3, 최고)")]
     for setting, exp, fs, label in refs:
         r = ref[(ref["experiment"] == exp) & (ref["model"] == "LightGBM") & (ref["feature_set"] == fs)
-                & ref["note"].str.contains("threshold=0.5") & ~ref["note"].str.contains("tuned")]
+                & ref["note"].str.contains("threshold=0.5", na=False) & ~ref["note"].str.contains("tuned", na=False)]
         if len(r):
             res = pd.concat([res, pd.DataFrame([{
                 "setting": setting, "name": label, "category": "머신러닝", "rule": "참고치",
